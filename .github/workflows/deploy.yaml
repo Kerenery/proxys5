@@ -79,7 +79,7 @@ jobs:
 
           source: |
             startup.sh
-            docker-compose.yml
+            docker-compose.yaml
 
           target: "/tmp/socks5"
 
