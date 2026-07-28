@@ -26,8 +26,8 @@ fi
 
 echo "$SOCKS_USER:$SOCKS_PASSWORD" | chpasswd
 
-echo "Testing Dante config..."
-danted -f /etc/danted.conf -V
+echo "Generated Dante config:"
+cat /etc/danted.conf
 
 echo "Starting Dante"
 
