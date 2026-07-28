@@ -31,15 +31,17 @@ jobs:
 
       - name: Build image
         run: |
-          docker build \
-            -t ghcr.io/${{ github.repository_owner }}/socks5-proxy:latest .
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
 
+          docker build \
+            -t ghcr.io/$OWNER/socks5-proxy:latest .
 
       - name: Push image
         run: |
-          docker push \
-            ghcr.io/${{ github.repository_owner }}/socks5-proxy:latest
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
 
+          docker push \
+            ghcr.io/$OWNER/socks5-proxy:latest
 
 
   deploy:
