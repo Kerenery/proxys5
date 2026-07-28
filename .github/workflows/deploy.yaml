@@ -64,7 +64,11 @@ jobs:
           script: |
             echo "SSH works"
             uname -a
-
+      - name: Debug files
+        run: |
+          pwd
+          ls -la
+          find . -maxdepth 2 -type f 
       - name: Upload files
         uses: appleboy/scp-action@v1
 
