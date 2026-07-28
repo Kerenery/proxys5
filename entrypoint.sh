@@ -40,5 +40,5 @@ echo "$SOCKS_USER:$SOCKS_PASSWORD" | chpasswd
 
 echo "Starting Dante"
 
-exec danted -f /etc/danted.conf
+exec danted -f /etc/danted.conf -N 1
 
