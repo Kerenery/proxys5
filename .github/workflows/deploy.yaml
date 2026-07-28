@@ -109,7 +109,7 @@ jobs:
             mkdir -p /opt/socks5
 
 
-            cp /tmp/socks5/docker-compose.yml \
+            cp /tmp/socks5/docker-compose.yaml \
               /opt/socks5/docker-compose.yml
 
 
