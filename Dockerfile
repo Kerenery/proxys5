@@ -6,6 +6,7 @@ RUN apt-get update && \
         gettext-base \
         iproute2 \
         passwd \
+        libpam0g \
     && rm -rf /var/lib/apt/lists/*
 
 COPY danted.conf.template /etc/danted.conf.template

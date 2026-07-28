@@ -2,20 +2,31 @@
 
 set -e
 
-echo "Detecting interface..."
+echo "Creating PAM config..."
 
-INTERFACE=$(ip route get 1.1.1.1 | awk '{for(i=1;i<=NF;i++) if($i=="dev") print $(i+1)}')
+cat > /etc/pam.d/sockd <<EOF
+auth required pam_unix.so
+account required pam_unix.so
+EOF
 
-echo "External IP: $INTERFACE"
 
-export INTERFACE
+echo "Detecting external IP..."
+
+EXTERNAL_IP=$(ip route get 1.1.1.1 | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}')
+
+echo "External IP: $EXTERNAL_IP"
+
+export INTERFACE=$EXTERNAL_IP
+
 
 envsubst '${INTERFACE}' \
  < /etc/danted.conf.template \
  > /etc/danted.conf
 
+
 echo "Generated Dante config:"
 cat /etc/danted.conf
+
 
 echo "Creating proxy user..."
 
@@ -29,4 +40,4 @@ echo "$SOCKS_USER:$SOCKS_PASSWORD" | chpasswd
 
 echo "Starting Dante"
 
-exec danted -f /etc/danted.conf -D
+exec sockd -f /etc/danted.conf -D
