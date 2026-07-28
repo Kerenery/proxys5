@@ -77,9 +77,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
 
-          source: |
-            startup.sh
-            docker-compose.yaml
+          source: "."
 
           target: "/tmp/socks5"
 
