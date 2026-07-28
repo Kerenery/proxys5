@@ -4,15 +4,15 @@ set -e
 
 echo "Detecting interface..."
 
-INTERFACE=$(ip route get 1.1.1.1 | awk '{print $5}')
+INTERFACE=$(ip route get 1.1.1.1 | awk '{print $7}')
 
-echo "Interface: $INTERFACE"
+echo "External IP: $INTERFACE"
 
 export INTERFACE
 
 envsubst '${INTERFACE}' \
-  < /etc/danted.conf.template \
-  > /etc/danted.conf
+ < /etc/danted.conf.template \
+ > /etc/danted.conf
 
 echo "Generated Dante config:"
 cat /etc/danted.conf
@@ -25,6 +25,9 @@ then
 fi
 
 echo "$SOCKS_USER:$SOCKS_PASSWORD" | chpasswd
+
+echo "Testing Dante config..."
+danted -f /etc/danted.conf -V
 
 echo "Starting Dante"
 
