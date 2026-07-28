@@ -66,7 +66,7 @@ jobs:
             uname -a
 
       - name: Upload files
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1
 
         with:
           host: ${{ secrets.VPS_HOST }}
