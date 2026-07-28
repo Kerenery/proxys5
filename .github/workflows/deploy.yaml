@@ -110,7 +110,7 @@ jobs:
 
 
             cp /tmp/socks5/docker-compose.yaml \
-              /opt/socks5/docker-compose.yml
+              /opt/socks5/docker-compose.yaml
 
 
             printf "SOCKS_USER=%s\nSOCKS_PASSWORD=%s\n" \
