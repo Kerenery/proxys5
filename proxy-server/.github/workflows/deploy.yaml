@@ -1,0 +1,179 @@
+name: Deploy SOCKS5
+
+
+on:
+
+  push:
+
+    branches:
+      - main
+
+
+
+jobs:
+
+
+  build:
+
+
+    runs-on: ubuntu-latest
+
+
+    permissions:
+
+      contents: read
+
+      packages: write
+
+
+
+    steps:
+
+
+      - uses: actions/checkout@v4
+
+
+
+      - name: Login GHCR
+
+        uses: docker/login-action@v3
+
+        with:
+
+          registry: ghcr.io
+
+          username: ${{ github.actor }}
+
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+      - name: Build image
+
+        run: |
+
+          docker build \
+          -t ghcr.io/${{ github.repository_owner }}/socks5-proxy:latest .
+
+
+
+      - name: Push image
+
+        run: |
+
+          docker push \
+          ghcr.io/${{ github.repository_owner }}/socks5-proxy:latest
+
+
+
+
+
+  deploy:
+
+
+    needs: build
+
+
+    runs-on: ubuntu-latest
+
+
+
+    steps:
+
+
+      - uses: actions/checkout@v4
+
+
+
+      - name: Upload files
+
+        uses: appleboy/scp-action@v0.1.7
+
+        with:
+
+          host: ${{ secrets.VPS_HOST }}
+
+          username: ${{ secrets.VPS_USER }}
+
+          key: ${{ secrets.VPS_SSH_KEY }}
+
+          source: |
+            startup.sh
+            docker-compose.yml
+
+          target: /tmp/socks5
+
+
+
+
+
+      - name: Deploy VPS
+
+
+        uses: appleboy/ssh-action@v1
+
+
+        with:
+
+
+          host: ${{ secrets.VPS_HOST }}
+
+
+          username: ${{ secrets.VPS_USER }}
+
+
+          key: ${{ secrets.VPS_SSH_KEY }}
+
+
+
+          script: |
+
+
+            if [ ! -f /opt/socks5/.initialized ]
+            then
+
+              chmod +x /tmp/socks5/startup.sh
+
+              /tmp/socks5/startup.sh
+
+
+              touch /opt/socks5/.initialized
+
+            fi
+
+
+
+            mkdir -p /opt/socks5
+
+
+
+            cp /tmp/socks5/docker-compose.yml \
+            /opt/socks5/docker-compose.yml
+
+
+
+            cat > /opt/socks5/.env <<EOF
+SOCKS_USER=${{ secrets.SOCKS_USER }}
+SOCKS_PASSWORD=${{ secrets.SOCKS_PASSWORD }}
+EOF
+
+
+
+            cd /opt/socks5
+
+
+
+            docker login ghcr.io \
+            -u ${{ github.actor }} \
+            -p ${{ secrets.GHCR_TOKEN }}
+
+
+
+            docker compose pull
+
+
+            docker compose up -d
+
+
+
+            docker ps
