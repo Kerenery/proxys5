@@ -6,11 +6,9 @@ internal: 0.0.0.0 port = 1080
 external: ${INTERFACE}
 
 
-socksmethod: username
-
-
+socksmethod: username none
 user.privileged: root
-user.unprivileged: nobody
+user.notprivileged: nobody
 
 
 client pass {
